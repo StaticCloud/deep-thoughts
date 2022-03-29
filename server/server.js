@@ -10,12 +10,17 @@ const db = require('./config/connection');
 const PORT = process.env.PORT || 3001;
 const app = express();
 
+const { authMiddleware } = require('./utils/auth');
+
 const startServer = async () => {
   // create a new apollo server with our typedefs and resolvers
   const server = new ApolloServer({
     typeDefs,
-    resolvers
-  })
+    resolvers,
+    // ensures every request performs an auth check
+    // 21.2.5 The updated me()...
+    context: authMiddleware
+  });
 
   // start the server
   await server.start();
